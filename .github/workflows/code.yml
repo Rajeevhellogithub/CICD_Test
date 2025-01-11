@@ -23,7 +23,7 @@ jobs:
     - name: Train model
       run: |
         pip install -r requirements.txt
-        python train_model.py
+        python src/train_model.py
 
         echo "RF and LR Model Score" >report.md
         cat scores.txt
