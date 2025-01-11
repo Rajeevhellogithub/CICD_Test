@@ -7,33 +7,29 @@ on:
     branches: [ "main" ]
 
 permissions:
-  id-token: write
   contents: write
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  run:
+    runs-on: 
+      - ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
-    - name: Train model
-      run: |
-        pip install -r requirements.txt
-        python src/train_model.py
+      - uses: iterative/setup-cml@v1
+      - uses: actions/checkout@v3
+      - name: Train model
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install -r requirements.txt
+          python train_model.py
 
-        echo "RF and LR Model Score" >report.md
-        cat scores.txt
+          echo "RF and LR Model Score" >report.md
+          cat scores.txt
           
-        echo "Confusion Matrix & Feature Importance">report1.md
-        echo '|[](./ConfusionMatrix.png "ConfusionMatrix")' >> report1.md
-        echo '|[](./FeatureImportance.png "FeatureImportance")' >> report1.md
+          echo "Confusion Matrix & Feature Importance">report1.md
+          echo '|[](./ConfusionMatrix.png "ConfusionMatrix")' >> report1.md
+          echo '|[](./FeatureImportance.png "FeatureImportance")' >> report1.md
      
-        cat report.md report1.md >> combined_file.md
-        cml comment create combined_file.md
-    - name: Test with pytest
-      run: |
-        pytest
+          cat report.md report1.md >> combined_file.md
+          cml comment create combined_file.md
